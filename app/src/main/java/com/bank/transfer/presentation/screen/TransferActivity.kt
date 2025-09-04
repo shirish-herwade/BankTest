@@ -83,7 +83,7 @@ class TransferActivity : ComponentActivity() {
                             onSendPayment = { details: TransferDetails, function: (TransferResult) -> Unit ->
                                 Log.d("PaymentApp", "Payment Details: ")
                             } ,
-                            onBack = { /* TODO: Implement onBack */ } // Added a lambda for onBack
+                            onBack = { /* TODO: Implement onBack */ }
                         )
                     }
                 }
