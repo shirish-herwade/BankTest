@@ -36,38 +36,40 @@ import androidx.compose.ui.unit.dp
 import com.bank.transfer.data.model.TransferDetails
 import com.bank.transfer.data.model.TransferResult
 import com.bank.transfer.data.model.TransferType
+import com.bank.transfer.presentation.viewmodel.TransferViewModel
 import com.bank.transfer.ui.theme.PaymentBankTheme
 
 class TransferActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val transferViewModel = TransferViewModel()
+
         enableEdgeToEdge()
 
         avoidScreenShot()
-        
+
         setContent {
             PaymentBankTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> 
-                    var currentTransferType by remember { mutableStateOf(TransferType.DOMESTIC) }
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     Column(
-                        modifier = Modifier 
+                        modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Row(
-                            modifier = Modifier 
+                            modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .padding(2.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Button(onClick = { currentTransferType = TransferType.DOMESTIC }) {
+                            Button(onClick = { transferViewModel.onDomesticClicked() }) {
                                 Text("Domestic")
                             }
-                            Spacer(Modifier.width(8.dp)) 
-                            Button(onClick = { currentTransferType = TransferType.INTERNATIONAL }) {
+                            Spacer(Modifier.width(8.dp))
+                            Button(onClick = { transferViewModel.onInterNationalClicked() }) {
                                 Text("International")
                             }
                         }
@@ -79,10 +81,10 @@ class TransferActivity : ComponentActivity() {
                         )
 
                         PaymentScreen(
-                            transferType = currentTransferType,
+                            transferType = TransferType.INTERNATIONAL,// currentTransferType,
                             onSendPayment = { details: TransferDetails, function: (TransferResult) -> Unit ->
                                 Log.d("PaymentApp", "Payment Details: ")
-                            } ,
+                            },
                             onBack = { /* TODO: Implement onBack */ }
                         )
                     }
@@ -99,7 +101,7 @@ class TransferActivity : ComponentActivity() {
                 transferType = TODO(),
                 onSendPayment = TODO(),
                 onBack = TODO()
-            ) 
+            )
         }
     }
 
@@ -123,7 +125,7 @@ class TransferActivity : ComponentActivity() {
         }
     }
 
-    fun avoidScreenShot(){
+    fun avoidScreenShot() {
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
