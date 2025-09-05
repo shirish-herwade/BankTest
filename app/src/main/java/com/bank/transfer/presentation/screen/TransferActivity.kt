@@ -1,4 +1,4 @@
-package com.bank.transfer.presentation.screen // Your main package
+package com.bank.transfer.presentation.screen
 
 import android.os.Bundle
 import android.view.WindowManager

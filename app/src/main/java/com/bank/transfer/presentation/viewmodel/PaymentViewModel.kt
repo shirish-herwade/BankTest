@@ -1,20 +1,15 @@
 package com.bank.transfer.presentation.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope // For coroutines
-import com.bank.transfer.data.model.TransferDetails
-import com.bank.transfer.data.model.TransferResult
+import androidx.lifecycle.viewModelScope
+import com.bank.transfer.data.model.PaymentUIState
 import com.bank.transfer.data.model.TransferType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-import androidx.compose.runtime.State
-import com.bank.transfer.data.model.PaymentUIState
 
 class PaymentViewModel : ViewModel() {
 
@@ -65,34 +60,10 @@ class PaymentViewModel : ViewModel() {
     }
 
 
-    fun sendPayment1(onResultExternal: (TransferResult) -> Unit) {
-//        val details = TransferDetails(
-//            recipientName = _uiState.value.recipientName,
-//            accountNumber = _uiState.value.accountNumber,
-//            amount = _uiState.value.amount,
-//            iban = _uiState.value.iban,
-//            swiftCode = _uiState.value.swiftCode,
-//            fromAccount = TODO(),
-//            toAccount = TODO(),
-//            amount = 1.toDouble()
-//        )
-
-        if (_uiState.value.recipientName.isBlank()) {
-            _uiState.value = _uiState.value.copy(recipientNameError = "Recipient name is required")
-            onResultExternal(TransferResult.Error(message = "Validation failed"))
-            return
-        }
-
-//        _uiState.value = _uiState.value.copy(isLoading = true, paymentResult = null)
-//        Log.d("PaymentViewModel", "Attempting to send payment. CurrentState: $_uiState")
-    }
-
-    //    fun sendPayment(onResult: (TransferResult) -> Unit) {
     fun sendPayment() {
         if (_uiState.value.recipientName.isBlank()) {
             _uiState.value =
                 _uiState.value.copy(recipientNameError = "Recipient name is required")
-//            onResult(TransferResult.Error(message = "Validation failed"))
             return
         }
 
@@ -136,12 +107,6 @@ class PaymentViewModel : ViewModel() {
                 )
             }
         }
-
-//        _uiState.value = _uiState.value.copy(
-//            isLoading = false,
-//            paymentResult = "Payment processed (simulated)."
-//        )
-//        onResult(TransferResult.Success(message = "Payment processed (simulated)."))
     }
 }
 
