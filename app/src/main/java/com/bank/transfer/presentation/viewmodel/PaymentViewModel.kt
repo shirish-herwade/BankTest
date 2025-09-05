@@ -89,11 +89,69 @@ class PaymentViewModel : ViewModel() {
         }
     }
 
+    fun isDataValid(): Boolean {
+        val name = _uiState.value.recipientName
+        if (name.isBlank()) {
+            _uiState.value = _uiState.value.copy(
+                recipientNameError = "Recipient name is required"
+            )
+            return false
+        } else if (name.length < 3) {
+            _uiState.value = _uiState.value.copy(
+                recipientNameError = "Name is too short"
+            )
+            return false
+        }
+
+        val accountNumber = _uiState.value.accountNumber
+        if (accountNumber.isBlank()) {
+            _uiState.value =
+                _uiState.value.copy(accountNumberError = "Account number is required")
+            return false
+        } else if (accountNumber.length < 6 || accountNumber.length > 12) {
+            _uiState.value =
+                _uiState.value.copy(accountNumberError = "Account number invalid")
+            return false
+        }
+
+        val amount = _uiState.value.amount
+        if (amount.isBlank()) {
+            _uiState.value = _uiState.value.copy(amountError = "Amount is required")
+            return false
+        } else if (amount.toDoubleOrNull() == null) {
+            _uiState.value = _uiState.value.copy(amountError = "Invalid amount")
+            return false
+        }
+
+        if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL &&
+            (_uiState.value.iban.isBlank() || _uiState.value.swiftCode.isBlank())
+        ) {
+            if (_uiState.value.iban.isBlank()) {
+                _uiState.value = _uiState.value.copy(ibanError = "IBAN is required")
+            }
+            if (_uiState.value.swiftCode.isBlank()) {
+                _uiState.value = _uiState.value.copy(swiftCodeError = "SWIFT code is required")
+            }
+            return false
+        }
+        return true
+    }
+
+    fun clearFields() {
+        _uiState.value = _uiState.value.copy(
+            recipientName = "",
+            accountNumber = "",
+            amount = "",
+            iban = "",
+            swiftCode = "",
+            recipientNameError = null,
+            accountNumberError = null,
+            amountError = null
+        )
+    }
 
     fun sendPayment() {
-        if (_uiState.value.recipientName.isBlank()) {
-            _uiState.value =
-                _uiState.value.copy(recipientNameError = "Recipient name is required")
+        if (!isDataValid()) {
             return
         }
 
@@ -110,7 +168,7 @@ class PaymentViewModel : ViewModel() {
                     isLoading = true,
                     paymentResult = null
                 )
-                delay(5000)
+                delay(3000)
                 val success = Random.nextBoolean()
                 if (success) {
                     Log.v("PaymentViewModel", "Payment successful!")
@@ -119,6 +177,7 @@ class PaymentViewModel : ViewModel() {
                             isLoading = false,
                             paymentResult = "Payment Successful!"
                         )
+                    clearFields()
 //                onResult(TransferResult.Success(message = "Payment Successful!"))
                 } else {
                     Log.v("PaymentViewModel", "Payment failed!")
