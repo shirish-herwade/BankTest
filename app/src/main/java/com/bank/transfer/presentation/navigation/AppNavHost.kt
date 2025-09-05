@@ -44,9 +44,11 @@ fun AppNavHost(
             PaymentScreen(
                 transferType = paymentViewModel.uiState.value.currentTransferType,
                 onSendPayment = {
-                    paymentViewModel.sendPayment { result ->
-                        Log.d("AppNavHost", "Payment Result in callback: $result")
-                    }
+                    paymentViewModel::sendPayment
+//                    {
+//                        result ->
+//                        Log.d("AppNavHost", "Payment Result in callback: $result")
+//                    }
                 },
                 onBack = {
                     navController.popBackStack()

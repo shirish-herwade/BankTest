@@ -2,6 +2,7 @@ package com.bank.transfer.presentation.screen
 
 // ... other imports ...
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,7 +47,6 @@ fun PaymentScreen(
     onBack: () -> Unit
 ) {
     val paymentViewModel = PaymentViewModel()
-    val recipientName = null
 
     Scaffold(
         topBar = {
@@ -59,9 +60,11 @@ fun PaymentScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
+//                ,
+//                modifier = Modifier.height(60.dp)
             )
         }
     ) { innerPadding ->
@@ -82,9 +85,10 @@ fun PaymentScreen(
                 modifier = Modifier.fillMaxWidth(),
                 isError = paymentViewModel.uiState.value.recipientNameError != null
             )
-            if (paymentViewModel.uiState.value.recipientNameError != null) {
+            val recipientNameError = paymentViewModel.uiState.value.recipientNameError
+            if (recipientNameError != null) {
                 Text(
-                    text = "",
+                    text = recipientNameError,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.fillMaxWidth()
@@ -96,14 +100,17 @@ fun PaymentScreen(
                 onValueChange = paymentViewModel::onAccountNumberChanged,
                 label = { Text("Account Number") },
                 modifier = Modifier.fillMaxWidth(),
+//                    .focusRequester(focusRequester),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = paymentViewModel.uiState.value.accountNumberError != null
             )
-            if (paymentViewModel.uiState.value.accountNumberError != null) {
+            val accountNumberError = paymentViewModel.uiState.value.accountNumberError
+            if (accountNumberError != null) {
                 Text(
-                    text = "",
+                    text = accountNumberError,
                     color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
@@ -115,72 +122,78 @@ fun PaymentScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 isError = paymentViewModel.uiState.value.amountError != null
             )
-            if (paymentViewModel.uiState.value.amountError != null) {
+            val amountError = paymentViewModel.uiState.value.amountError
+            if (amountError != null) {
                 Text(
-                    "",
+                    text = amountError,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
 
-//            if (transferType == TransferType.INTERNATIONAL) {
-//                OutlinedTextField(
-//                    value = paymentViewModel.uiState.value.iban,
-//                    onValueChange = paymentViewModel::onIbanChanged,
-//                    label = { Text("IBAN") },
-//                    modifier = Modifier.fillMaxWidth(),
-//                    isError = paymentViewModel.uiState.value.ibanError != null
-//                )
-//                if (paymentViewModel.uiState.value.ibanError != null) {
-//                    Text(
-//                        "",
-//                        color = MaterialTheme.colorScheme.error,
-//                        style = MaterialTheme.typography.bodySmall
-//                    )
-//                }
-//
-//
-//                OutlinedTextField(
-//                    value = paymentViewModel.uiState.value.swiftCode,
-//                    onValueChange = paymentViewModel::onSwiftCodeChanged,
-//                    label = { Text("SWIFT Code") },
-//                    modifier = Modifier.fillMaxWidth(),
-//                    isError = paymentViewModel.uiState.value.swiftCodeError != null
-//                )
-//                if (paymentViewModel.uiState.value.swiftCodeError != null) {
-//                    Text(
-//                        "",
-//                        color = MaterialTheme.colorScheme.error,
-//                        style = MaterialTheme.typography.bodySmall
-//                    )
-//                }
-//            }
-        }
+            if (transferType == TransferType.INTERNATIONAL) {
+                OutlinedTextField(
+                    value = paymentViewModel.uiState.value.iban,
+                    onValueChange = paymentViewModel::onIbanChanged,
+                    label = { Text("IBAN") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = paymentViewModel.uiState.value.ibanError != null
+                )
+                val ibanError = paymentViewModel.uiState.value.ibanError
+                if (ibanError != null) {
+                    Text(
+                        text = ibanError,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
-        Spacer(Modifier.height(16.dp))
-
-        if (paymentViewModel.uiState.value.isLoading) {
-            CircularProgressIndicator()
-        } else {
-            Button(
-                onClick = onSendPayment,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Send Payment")
+                OutlinedTextField(
+                    value = paymentViewModel.uiState.value.swiftCode,
+                    onValueChange = paymentViewModel::onSwiftCodeChanged,
+                    label = { Text("SWIFT Code") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = paymentViewModel.uiState.value.swiftCodeError != null
+                )
+                val swiftCodeError = paymentViewModel.uiState.value.swiftCodeError
+                if (swiftCodeError != null) {
+                    Text(
+                        text = swiftCodeError,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
-        }
 
-        paymentViewModel.uiState.value.paymentResult?.let {
             Spacer(Modifier.height(16.dp))
-            Text(
-                it, color = if (it.contains("Success"))
-                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-            )
+
+            if (paymentViewModel.uiState.value.isLoading) {
+                Log.v("PaymentScreen", "in if Loading...")
+                CircularProgressIndicator()
+            } else {
+                Log.v("PaymentScreen", "in else...")
+
+                Button(
+                    onClick = { paymentViewModel.sendPayment() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Send Payment")
+                }
+            }
+
+            paymentViewModel.uiState.value.paymentResult?.let {
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    it, color = if (it.contains("Success"))
+                        MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
 
-@Preview(showBackground = true, name = "Domestic Payment Preview")
+//@Preview(showBackground = true, name = "Domestic Payment Preview")
+@Preview
 @Composable
 fun PaymentScreenPreviewDomestic() {
     PaymentBankTheme {

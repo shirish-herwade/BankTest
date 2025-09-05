@@ -71,39 +71,5 @@ class TransferViewModel : ViewModel() {
             )
         }
     }
-
-    //TODO clean code in this class
-
-//    fun sendPayment(details: TransferDetails, onResult: (TransferResult) -> Unit) {
-//        // 1. Validate all necessary fields from transferUIState based on currentTransferType
-//        // For example:
-//        if (transferUIState.recipientName.isBlank()) {
-//            transferUIState = transferUIState.copy(recipientNameError = "Recipient name is required")
-//            onResult(TransferResult.Error(message = "Validation failed")) // Or a more specific error
-//            return
-//        }
-//        // ... more validations ...
-//
-//        transferUIState = transferUIState.copy(isLoading = true, paymentResult = null)
-//        Log.d("TransferViewModel", "Attempting to send payment. Details: $details, CurrentState: $transferUIState")
-//
-//        // Simulate network call or actual payment processing
-//        // viewModelScope.launch {
-//        //     delay(2000) // Simulate delay
-//        //     val success = Random.nextBoolean() // Simulate success/failure
-//        //     if (success) {
-//        //         transferUIState = transferUIState.copy(isLoading = false, paymentResult = "Payment Successful!")
-//        //         onResult(TransferResult.Success(message = "Payment Successful!"))
-//        //     } else {
-//        //         transferUIState = transferUIState.copy(isLoading = false, paymentResult = "Payment Failed.")
-//        //         onResult(TransferResult.Error(message = "Payment Failed."))
-//        //     }
-//        // }
-//
-//        // For now, let's just simulate a success immediately for the callback
-//        // In a real app, this would be asynchronous.
-//        transferUIState = transferUIState.copy(isLoading = false, paymentResult = "Payment processed (simulated).")
-//        onResult(TransferResult.Success(message = "Payment processed (simulated)."))
-//    }
 }
 
