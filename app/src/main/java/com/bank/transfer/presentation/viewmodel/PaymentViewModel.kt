@@ -1,6 +1,7 @@
 package com.bank.transfer.presentation.viewmodel
 
 import android.util.Log
+import androidx.compose.animation.core.copy
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,13 @@ class PaymentViewModel : ViewModel() {
     private var _uiState = mutableStateOf(PaymentUIState())
     val uiState: State<PaymentUIState> = _uiState
 
+    fun initializeTransferType(transferType: TransferType) {
+        _uiState.value = _uiState.value.copy(
+            currentTransferType = transferType
+        )
+        Log.d("PaymentViewModel", "Initialized with transfer type: $transferType")
+    }
+
     fun setTransferType(newType: TransferType) {
         Log.d("PaymentViewModel", "Transfer type set to: $newType")
         _uiState.value = _uiState.value.copy(
@@ -23,8 +31,10 @@ class PaymentViewModel : ViewModel() {
             recipientName = "",
             accountNumber = "",
             amount = "",
-            iban = if (newType == TransferType.DOMESTIC) "" else _uiState.value.iban,
-            swiftCode = if (newType == TransferType.DOMESTIC) "" else _uiState.value.swiftCode,
+            iban = if (newType == TransferType.DOMESTIC) ""
+            else _uiState.value.iban,
+            swiftCode = if (newType == TransferType.DOMESTIC) ""
+            else _uiState.value.swiftCode,
             recipientNameError = null,
             accountNumberError = null,
             amountError = null,
@@ -35,27 +45,47 @@ class PaymentViewModel : ViewModel() {
     }
 
     fun onRecipientNameChanged(newName: String) {
-        _uiState.value = _uiState.value.copy(recipientName = newName, recipientNameError = null)
+        _uiState.value = _uiState.value.copy(
+            recipientName = newName,
+            recipientNameError = null
+        )
     }
 
     fun onAccountNumberChanged(newAccountNumber: String) {
-        _uiState.value =
-            _uiState.value.copy(accountNumber = newAccountNumber, accountNumberError = null)
+        _uiState.value = _uiState.value.copy(
+            accountNumber = newAccountNumber,
+            accountNumberError = null
+        )
     }
 
     fun onAmountChanged(newAmount: String) {
-        _uiState.value = _uiState.value.copy(amount = newAmount, amountError = null)
+        _uiState.value = _uiState.value.copy(
+            amount = newAmount,
+            amountError = null
+        )
     }
 
     fun onIbanChanged(newIban: String) {
+        Log.d("PaymentViewModel", "onIbanChanged called with: $newIban")
         if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL) {
-            _uiState.value = _uiState.value.copy(iban = newIban, ibanError = null)
+            Log.d("PaymentViewModel", " in if INTERNATIONAL type") // Log state update
+            _uiState.value = _uiState.value.copy(
+                iban = newIban,
+                ibanError = null
+            )
+        } else {
+            Log.e("in onIbanChanged", " in else INTERNATIONAL type") // Log state update
         }
     }
 
     fun onSwiftCodeChanged(newSwift: String) {
         if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL) {
-            _uiState.value = _uiState.value.copy(swiftCode = newSwift, swiftCodeError = null)
+            _uiState.value = _uiState.value.copy(
+                swiftCode = newSwift,
+                swiftCodeError = null
+            )
+        } else {
+            Log.e("in onSwiftCodeChanged", " in else INTERNATIONAL type") // Log state update
         }
     }
 
