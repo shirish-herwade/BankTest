@@ -1,175 +1,194 @@
 package com.bank.transfer.presentation.screen
 
-
-import android.content.Context
-import android.content.Intent
-import android.content.pm.ShortcutInfo
-import android.content.pm.ShortcutManager
-import androidx.compose.foundation.layout.*
+// ... other imports ...
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.bank.transfer.data.model.TransferDetails
-import com.bank.transfer.data.model.TransferResult
 import com.bank.transfer.data.model.TransferType
+import com.bank.transfer.presentation.viewmodel.PaymentViewModel
+import com.bank.transfer.ui.theme.PaymentBankTheme
 
+@SuppressLint("ViewModelConstructorInComposable")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentScreen(
     transferType: TransferType,
-    onSendPayment: (
-        transferDetails: TransferDetails,
-        onResult: (result: TransferResult) -> Unit,
-    ) -> Unit,
+    onSendPayment: () -> Unit,
     onBack: () -> Unit
 ) {
+    val paymentViewModel = PaymentViewModel()
+    val recipientName = null
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pay an account", fontWeight = FontWeight.Medium) },
+                title = {
+                    Text(
+//                        if (transferType == TransferType.DOMESTIC)
+//                            "Domestic Payment" else "International Payment"
+                        transferType.name
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         }
-    ) { inner ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(inner)
+                .padding(innerPadding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // From account
-            OutlinedButton(
-                onClick = { },
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("From", fontSize = 12.sp, color = Color.Gray)
-                    Spacer(Modifier.height(4.dp))
-                    Text("Select account", fontSize = 16.sp)
-                }
-            }
 
-            // To payee
-            OutlinedButton(
-                onClick = { },
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("To", fontSize = 12.sp, color = Color.Gray)
-                    Spacer(Modifier.height(4.dp))
-                    Text("Add/select payee", fontSize = 16.sp)
-                }
-            }
-
-            // Amount field
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = paymentViewModel.uiState.value.recipientName,
+                onValueChange = paymentViewModel::onRecipientNameChanged,
+                label = { Text("Recipient Name") },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Amount") },
-                placeholder = { Text("£ Enter amount") },
-                shape = RoundedCornerShape(12.dp)
+                isError = paymentViewModel.uiState.value.recipientNameError != null
             )
-
-            // Payment type
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("What sort of transfer is this?", fontSize = 14.sp)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    RadioButton(
-                        selected = true,
-                        onClick = { }
-                    )
-                    Column {
-                        Text("One-off", color = MaterialTheme.colorScheme.primary)
-                        Text("13 July 2020", fontSize = 13.sp, color = Color.Gray)
-                    }
-                    Spacer(Modifier.weight(1f))
-                    TextButton(onClick = { }) {
-                        Text("Change date")
-                    }
-                }
+            if (paymentViewModel.uiState.value.recipientNameError != null) {
+                Text(
+                    text = "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
-            // Review button
+            OutlinedTextField(
+                value = paymentViewModel.uiState.value.accountNumber,
+                onValueChange = paymentViewModel::onAccountNumberChanged,
+                label = { Text("Account Number") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = paymentViewModel.uiState.value.accountNumberError != null
+            )
+            if (paymentViewModel.uiState.value.accountNumberError != null) {
+                Text(
+                    text = "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            OutlinedTextField(
+                value = paymentViewModel.uiState.value.amount,
+                onValueChange = paymentViewModel::onAmountChanged,
+                label = { Text("Amount") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                isError = paymentViewModel.uiState.value.amountError != null
+            )
+            if (paymentViewModel.uiState.value.amountError != null) {
+                Text(
+                    "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+//            if (transferType == TransferType.INTERNATIONAL) {
+//                OutlinedTextField(
+//                    value = paymentViewModel.uiState.value.iban,
+//                    onValueChange = paymentViewModel::onIbanChanged,
+//                    label = { Text("IBAN") },
+//                    modifier = Modifier.fillMaxWidth(),
+//                    isError = paymentViewModel.uiState.value.ibanError != null
+//                )
+//                if (paymentViewModel.uiState.value.ibanError != null) {
+//                    Text(
+//                        "",
+//                        color = MaterialTheme.colorScheme.error,
+//                        style = MaterialTheme.typography.bodySmall
+//                    )
+//                }
+//
+//
+//                OutlinedTextField(
+//                    value = paymentViewModel.uiState.value.swiftCode,
+//                    onValueChange = paymentViewModel::onSwiftCodeChanged,
+//                    label = { Text("SWIFT Code") },
+//                    modifier = Modifier.fillMaxWidth(),
+//                    isError = paymentViewModel.uiState.value.swiftCodeError != null
+//                )
+//                if (paymentViewModel.uiState.value.swiftCodeError != null) {
+//                    Text(
+//                        "",
+//                        color = MaterialTheme.colorScheme.error,
+//                        style = MaterialTheme.typography.bodySmall
+//                    )
+//                }
+//            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        if (paymentViewModel.uiState.value.isLoading) {
+            CircularProgressIndicator()
+        } else {
             Button(
-                onClick = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4BA3F4))
+                onClick = onSendPayment,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Review transfer", fontSize = 16.sp, color = Color.White)
-            }
-
-            // Important info
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Important", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-                Text(
-                    "• Future-dated payments can't be subsequently changed in the app. You'll need to use Online Banking",
-                    fontSize = 14.sp
-                )
-                Text(
-                    "• If you're a Wealth customer, please call us to change a future-dated transfer",
-                    fontSize = 14.sp
-                )
-                Text(
-                    "• Cash transfers between accounts will take place immediately",
-                    fontSize = 14.sp
-                )
+                Text("Send Payment")
             }
         }
+
+        paymentViewModel.uiState.value.paymentResult?.let {
+            Spacer(Modifier.height(16.dp))
+            Text(
+                it, color = if (it.contains("Success"))
+                    MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+            )
+        }
     }
-
-
 }
 
-
-@Preview(showBackground = true, name = "Domestic Transfer Preview")
+@Preview(showBackground = true, name = "Domestic Payment Preview")
 @Composable
-fun DomesticPaymentScreenPreview() {
-    MaterialTheme { // Assuming you have a MaterialTheme defined
+fun PaymentScreenPreviewDomestic() {
+    PaymentBankTheme {
         PaymentScreen(
             transferType = TransferType.DOMESTIC,
-            onSendPayment = TODO()
-        ) {
-            println("Domestic Payment Details: ")
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "International Transfer Preview")
-@Composable
-fun InternationalPaymentScreenPreview() {
-    MaterialTheme { // Assuming you have a MaterialTheme defined
-        PaymentScreen(
-            transferType = TransferType.INTERNATIONAL,
-            onSendPayment = TODO()
-        ) {
-            println("International Payment Details: ")
-        }
+            onSendPayment = {},
+            onBack = {}
+        )
     }
 }
 
