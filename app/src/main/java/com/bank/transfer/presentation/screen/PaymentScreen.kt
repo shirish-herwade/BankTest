@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,8 @@ fun PaymentScreen(
     val repository: TransferRepository = TransferRepository.create()
     val paymentViewModelFactory = PaymentViewModelFactory(repository)
     val paymentViewModel: PaymentViewModel = viewModel(factory = paymentViewModelFactory)
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(transferType) {
         paymentViewModel.initializeTransferType(transferType)
@@ -210,7 +213,10 @@ fun PaymentScreen(
                 BankLog.v(TAG, "in else...")
 
                 Button(
-                    onClick = { paymentViewModel.sendPayment() },
+                    onClick = {
+                        paymentViewModel.sendPayment()
+                        keyboardController?.hide()
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Send Payment")

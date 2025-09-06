@@ -2,24 +2,26 @@ package com.bank.transfer.data.repo
 
 import com.bank.transfer.data.model.TransferDetails
 import com.bank.transfer.data.model.TransferResult
+import com.bank.transfer.data.model.TransferResult.Companion.CALL_TIMEOUT
+import com.bank.transfer.data.model.TransferResult.Companion.PAYMENT_FAILED
+import com.bank.transfer.data.model.TransferResult.Companion.PAYMENT_SUCCESS
 import com.bank.transfer.data.model.TransferResult.Companion.STATUS_CODE_ERROR
 import com.bank.transfer.data.model.TransferResult.Companion.STATUS_CODE_SUCCESS
 import com.bank.transfer.domain.BankLog
 import com.bank.transfer.domain.repository.TransferRepository
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 const val TAG = "TransferRepositoryImpl"
-const val PAYMENT_SUCCESS = "Payment successful!"
-const val PAYMENT_FAILED = "Payment failed!"
 
 object TransferRepositoryImpl : TransferRepository {
     override suspend fun domesticTransfer(
         transferDetails: TransferDetails.DomesticTransferDetails
     ): TransferResult {
         try {
-            delay(3000)
-            val success = Random.nextBoolean()
+            delay(CALL_TIMEOUT)
+            val success = Random.nextInt(11) > 3
 
             if (success) {
                 BankLog.v(TAG, PAYMENT_SUCCESS)
@@ -40,7 +42,7 @@ object TransferRepositoryImpl : TransferRepository {
         transferDetails: TransferDetails.InternationalTransferDetails
     ): TransferResult {
         try {
-            delay(3000)
+            delay(CALL_TIMEOUT)
             val success = Random.nextBoolean()
 
             if (success) {
