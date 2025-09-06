@@ -30,7 +30,7 @@ import org.mockito.kotlin.whenever
 @ExperimentalCoroutinesApi
 class PaymentViewModelTest {
     @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+    private var instantExecutorRule = InstantTaskExecutorRule()
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: PaymentViewModel
     private lateinit var mockTransferRepository: TransferRepository
