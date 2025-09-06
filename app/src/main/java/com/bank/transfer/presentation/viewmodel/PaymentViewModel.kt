@@ -1,6 +1,5 @@
 package com.bank.transfer.presentation.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,26 +10,24 @@ import com.bank.transfer.data.model.TransferResult
 import com.bank.transfer.data.model.TransferType
 import com.bank.transfer.domain.BankLog
 import com.bank.transfer.domain.repository.TransferRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class PaymentViewModel(
     private val transferRepository: TransferRepository
 ) : ViewModel() {
-
+    private val TAG = "PaymentViewModel"
     private var _uiState = mutableStateOf(PaymentUIState())
     val uiState: State<PaymentUIState> = _uiState
 
-    fun initializeTransferType(transferType: TransferType) {
+    internal fun initializeTransferType(transferType: TransferType) {
         _uiState.value = _uiState.value.copy(
             currentTransferType = transferType
         )
-        Log.d("PaymentViewModel", "Initialized with transfer type: $transferType")
+        BankLog.d(TAG, "Initialized with transfer type: $transferType")
     }
 
-    fun setTransferType(newType: TransferType) {
-        BankLog.d("PaymentViewModel", "Transfer type set to: $newType")
+    internal fun setTransferType(newType: TransferType) {
+        BankLog.d(TAG, "Transfer type set to: $newType")
         _uiState.value = _uiState.value.copy(
             currentTransferType = newType,
             recipientName = "",
@@ -49,52 +46,47 @@ class PaymentViewModel(
         )
     }
 
-    fun onRecipientNameChanged(newName: String) {
+    internal fun onRecipientNameChanged(newName: String) {
         _uiState.value = _uiState.value.copy(
-            recipientName = newName,
-            recipientNameError = null
+            recipientName = newName, recipientNameError = null
         )
     }
 
-    fun onAccountNumberChanged(newAccountNumber: String) {
+    internal fun onAccountNumberChanged(newAccountNumber: String) {
         _uiState.value = _uiState.value.copy(
-            accountNumber = newAccountNumber,
-            accountNumberError = null
+            accountNumber = newAccountNumber, accountNumberError = null
         )
     }
 
-    fun onAmountChanged(newAmount: String) {
+    internal fun onAmountChanged(newAmount: String) {
         _uiState.value = _uiState.value.copy(
-            amount = newAmount,
-            amountError = null
+            amount = newAmount, amountError = null
         )
     }
 
-    fun onIbanChanged(newIban: String) {
-        BankLog.d("PaymentViewModel", "onIbanChanged called with: $newIban")
+    internal fun onIbanChanged(newIban: String) {
+        BankLog.d(TAG, "onIbanChanged called with: $newIban")
         if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL) {
-            BankLog.d("PaymentViewModel", " in if INTERNATIONAL type") // Log state update
+            BankLog.d(TAG, " in if INTERNATIONAL type")
             _uiState.value = _uiState.value.copy(
-                iban = newIban,
-                ibanError = null
+                iban = newIban, ibanError = null
             )
         } else {
-            Log.e("in onIbanChanged", " in else INTERNATIONAL type") // Log state update
+            BankLog.e(TAG, "onIbanChanged in else INTERNATIONAL type")
         }
     }
 
-    fun onSwiftCodeChanged(newSwift: String) {
+    internal fun onSwiftCodeChanged(newSwift: String) {
         if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL) {
             _uiState.value = _uiState.value.copy(
-                swiftCode = newSwift,
-                swiftCodeError = null
+                swiftCode = newSwift, swiftCodeError = null
             )
         } else {
-            Log.e("in onSwiftCodeChanged", " in else INTERNATIONAL type") // Log state update
+            BankLog.e("in onSwiftCodeChanged", " in else INTERNATIONAL type")
         }
     }
 
-    fun isDataValid(): Boolean {
+    private fun isDataValid(): Boolean {
         val name = _uiState.value.recipientName
         if (name.isBlank()) {
             _uiState.value = _uiState.value.copy(
@@ -110,12 +102,10 @@ class PaymentViewModel(
 
         val accountNumber = _uiState.value.accountNumber
         if (accountNumber.isBlank()) {
-            _uiState.value =
-                _uiState.value.copy(accountNumberError = "Account number is required")
+            _uiState.value = _uiState.value.copy(accountNumberError = "Account number is required")
             return false
         } else if (accountNumber.length < 6 || accountNumber.length > 12) {
-            _uiState.value =
-                _uiState.value.copy(accountNumberError = "Account number invalid")
+            _uiState.value = _uiState.value.copy(accountNumberError = "Account number invalid")
             return false
         }
 
@@ -128,9 +118,7 @@ class PaymentViewModel(
             return false
         }
 
-        if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL &&
-            (_uiState.value.iban.isBlank() || _uiState.value.swiftCode.isBlank())
-        ) {
+        if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL && (_uiState.value.iban.isBlank() || _uiState.value.swiftCode.isBlank())) {
             if (_uiState.value.iban.isBlank()) {
                 _uiState.value = _uiState.value.copy(ibanError = "IBAN is required")
             }
@@ -142,7 +130,7 @@ class PaymentViewModel(
         return true
     }
 
-    fun clearFields() {
+    private fun clearFields() {
         _uiState.value = _uiState.value.copy(
             recipientName = "",
             accountNumber = "",
@@ -155,17 +143,16 @@ class PaymentViewModel(
         )
     }
 
-    fun sendPayment() {
+    internal fun sendPayment() {
         if (!isDataValid()) {
             return
         }
 
         _uiState.value = _uiState.value.copy(
-            isLoading = true,
-            paymentResult = null
+            isLoading = true, paymentResult = null
         )
         BankLog.d(
-            "PaymentViewModel",
+            TAG,
             "Attempting to send payment. Details: $_uiState.value, CurrentState: $_uiState.value"
         )
 
@@ -194,26 +181,21 @@ class PaymentViewModel(
                 }
 
                 if (paymentResult is TransferResult.Success) {
-                    BankLog.v("PaymentViewModel", "Payment successful!")
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            paymentResult = "Payment Successful!"
-                        )
+                    BankLog.v(TAG, "Payment successful!")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false, paymentResult = "Payment Successful!"
+                    )
                     clearFields()
                 } else { //  (paymentResult is TransferResult.Error)
-                    BankLog.v("PaymentViewModel", "Payment failed!")
-                    _uiState.value =
-                        _uiState.value.copy(
-                            isLoading = false,
-                            paymentResult = "Payment Failed."
-                        )
+                    BankLog.e(TAG, "Payment failed!")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false, paymentResult = "Payment Failed."
+                    )
                 }
             } catch (e: Exception) {
-                BankLog.v("PaymentViewModel", "Payment failed with exception: ${e.message}")
+                BankLog.e(TAG, "Payment failed with exception: ${e.message}")
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    paymentResult = "Payment Failed. ${e.message}"
+                    isLoading = false, paymentResult = "Payment Failed. ${e.message}"
                 )
             }
         }

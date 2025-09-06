@@ -95,7 +95,7 @@ fun TransferTypeScreen(
 @SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
-fun TransferTypeScreenPreview() {
+private fun TransferTypeScreenPreview() {
     PaymentBankTheme {
         TransferTypeScreen(
             transferTypeViewModel = TransferTypeViewModel(),

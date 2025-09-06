@@ -54,7 +54,6 @@ fun PaymentScreen(
     onBack: () -> Unit
 ) {
     val TAG = "PaymentScreen"
-
     val repository: TransferRepository = TransferRepository.create()
     val paymentViewModelFactory = PaymentViewModelFactory(repository)
     val paymentViewModel: PaymentViewModel = viewModel(factory = paymentViewModelFactory)
@@ -231,7 +230,7 @@ fun PaymentScreen(
 
 @Preview
 @Composable
-fun PaymentScreenPreviewDomestic() {
+private fun PaymentScreenPreviewDomestic() {
     PaymentBankTheme {
         PaymentScreen(
             transferType = TransferType.INTERNATIONAL,

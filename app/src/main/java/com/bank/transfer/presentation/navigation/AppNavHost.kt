@@ -1,19 +1,14 @@
-// File: app/src/main/java/com/bank/transfer/navigation/AppNavHost.kt
-package com.bank.transfer.navigation // Or com.bank.transfer.presentation.navigation
+package com.bank.transfer.presentation.navigation
 
-import android.util.Log // For logging, if you add it
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue // For the 'by' delegate
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-// REMOVE: import com.bank.transfer.presentation.screen.PaymentScreenContainer (if it was there)
 import com.bank.transfer.presentation.screen.PaymentScreen
 import com.bank.transfer.presentation.screen.TransferTypeScreen
 import com.bank.transfer.presentation.viewmodel.PaymentViewModel
 import com.bank.transfer.presentation.viewmodel.TransferTypeViewModel
-import androidx.compose.runtime.getValue
 
 object AppDestinations {
     const val TRANSFER_TYPE_ROUTE = "transfer_type"

@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.bank.transfer.domain.repository.TransferRepository
-import com.bank.transfer.navigation.AppNavHost
 import com.bank.transfer.presentation.factory.PaymentViewModelFactory
+import com.bank.transfer.presentation.navigation.AppNavHost
 import com.bank.transfer.presentation.viewmodel.PaymentViewModel
 import com.bank.transfer.ui.theme.PaymentBankTheme
 

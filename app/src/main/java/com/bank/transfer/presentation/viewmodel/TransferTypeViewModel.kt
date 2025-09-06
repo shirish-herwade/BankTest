@@ -8,13 +8,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-
 class TransferTypeViewModel : ViewModel() {
-
     private val _navigationEvent = MutableSharedFlow<TransferTypeNavigationEvent>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
-    fun onDomesticTypeSelected() {
+    internal fun onDomesticTypeSelected() {
         viewModelScope.launch {
             _navigationEvent.emit(
                 TransferTypeNavigationEvent
@@ -23,7 +21,7 @@ class TransferTypeViewModel : ViewModel() {
         }
     }
 
-    fun onInternationalTypeSelected() {
+    internal fun onInternationalTypeSelected() {
         viewModelScope.launch {
             _navigationEvent.emit(
                 TransferTypeNavigationEvent

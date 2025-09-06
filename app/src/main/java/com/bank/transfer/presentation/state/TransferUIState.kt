@@ -1,8 +1,6 @@
 package com.bank.transfer.presentation.state
 
 import com.bank.transfer.data.model.TransferType
-import com.bank.transfer.domain.model.Account
-import java.util.Date
 
 data class TransferUIState(
     val recipientName: String = "",
@@ -17,5 +15,4 @@ data class TransferUIState(
     val ibanError: String? = null,
     val swiftCodeError: String? = null,
     val isLoading: Boolean = false,
-    val paymentResult: String? = null
 )
