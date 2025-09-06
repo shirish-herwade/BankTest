@@ -21,15 +21,15 @@ object TransferRepositoryImpl : TransferRepository {
     ): TransferResult {
         try {
             delay(CALL_TIMEOUT)
-            val success = Random.nextInt(11) > 3
+            val success = Random.nextInt(10) > 1
 
             if (success) {
-                BankLog.v(TAG, PAYMENT_SUCCESS)
-                return TransferResult.Success(STATUS_CODE_SUCCESS, message = PAYMENT_SUCCESS)
-            } else {
-                BankLog.v(TAG, PAYMENT_FAILED)
-                return TransferResult.Error(STATUS_CODE_ERROR, message = PAYMENT_FAILED)
-            }
+                    BankLog.v(TAG, PAYMENT_SUCCESS)
+                    return TransferResult.Success(STATUS_CODE_SUCCESS, message = PAYMENT_SUCCESS)
+                } else {
+                    BankLog.v(TAG, PAYMENT_FAILED)
+                    return TransferResult.Error(STATUS_CODE_ERROR, message = PAYMENT_FAILED)
+                }
         } catch (e: Exception) {
             return TransferResult.Error(
                 STATUS_CODE_ERROR,
