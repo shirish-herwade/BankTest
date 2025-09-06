@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bank.transfer.data.model.PaymentUIState
 import com.bank.transfer.data.model.TransferType
+import com.bank.transfer.domain.BankLog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -25,7 +26,7 @@ class PaymentViewModel : ViewModel() {
     }
 
     fun setTransferType(newType: TransferType) {
-        Log.d("PaymentViewModel", "Transfer type set to: $newType")
+        BankLog.d("PaymentViewModel", "Transfer type set to: $newType")
         _uiState.value = _uiState.value.copy(
             currentTransferType = newType,
             recipientName = "",
@@ -66,9 +67,9 @@ class PaymentViewModel : ViewModel() {
     }
 
     fun onIbanChanged(newIban: String) {
-        Log.d("PaymentViewModel", "onIbanChanged called with: $newIban")
+        BankLog.d("PaymentViewModel", "onIbanChanged called with: $newIban")
         if (_uiState.value.currentTransferType == TransferType.INTERNATIONAL) {
-            Log.d("PaymentViewModel", " in if INTERNATIONAL type") // Log state update
+            BankLog.d("PaymentViewModel", " in if INTERNATIONAL type") // Log state update
             _uiState.value = _uiState.value.copy(
                 iban = newIban,
                 ibanError = null
@@ -156,14 +157,14 @@ class PaymentViewModel : ViewModel() {
         }
 
         _uiState.value = _uiState.value.copy(isLoading = true, paymentResult = null)
-        Log.d(
+        BankLog.d(
             "PaymentViewModel",
             "Attempting to send payment. Details: $_uiState.value, CurrentState: $_uiState.value"
         )
 
         viewModelScope.launch {
             try {
-                Log.v("PaymentViewModel", "Sending payment...")
+                BankLog.v("PaymentViewModel", "Sending payment...")
                 _uiState.value = _uiState.value.copy(
                     isLoading = true,
                     paymentResult = null
@@ -171,7 +172,7 @@ class PaymentViewModel : ViewModel() {
                 delay(3000)
                 val success = Random.nextBoolean()
                 if (success) {
-                    Log.v("PaymentViewModel", "Payment successful!")
+                    BankLog.v("PaymentViewModel", "Payment successful!")
                     _uiState.value =
                         _uiState.value.copy(
                             isLoading = false,
@@ -180,7 +181,7 @@ class PaymentViewModel : ViewModel() {
                     clearFields()
 //                onResult(TransferResult.Success(message = "Payment Successful!"))
                 } else {
-                    Log.v("PaymentViewModel", "Payment failed!")
+                    BankLog.v("PaymentViewModel", "Payment failed!")
                     _uiState.value =
                         _uiState.value.copy(
                             isLoading = false,
@@ -189,7 +190,7 @@ class PaymentViewModel : ViewModel() {
 //                onResult(TransferResult.Error(message = "Payment Failed."))
                 }
             } catch (e: Exception) {
-                Log.v("PaymentViewModel", "Payment failed with exception: ${e.message}")
+                BankLog.v("PaymentViewModel", "Payment failed with exception: ${e.message}")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     paymentResult = "Payment Failed. ${e.message}"

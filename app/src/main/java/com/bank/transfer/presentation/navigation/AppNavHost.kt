@@ -47,7 +47,7 @@ fun AppNavHost(
                     paymentViewModel::sendPayment
 //                    {
 //                        result ->
-//                        Log.d("AppNavHost", "Payment Result in callback: $result")
+//                        BankLog.d("AppNavHost", "Payment Result in callback: $result")
 //                    }
                 },
                 onBack = {

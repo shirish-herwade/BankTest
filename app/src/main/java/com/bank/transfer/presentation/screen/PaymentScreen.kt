@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bank.transfer.data.model.TransferType
+import com.bank.transfer.domain.BankLog
 import com.bank.transfer.presentation.viewmodel.PaymentViewModel
 import com.bank.transfer.ui.theme.PaymentBankTheme
 
@@ -194,14 +195,14 @@ fun PaymentScreen(
             Spacer(Modifier.height(16.dp))
 
             if (paymentViewModel.uiState.value.isLoading) {
-                Log.v("PaymentScreen", "in if Loading...")
+                BankLog.v("PaymentScreen", "in if Loading...")
                 CircularProgressIndicator(
                     strokeWidth = 8.dp,
                     modifier = Modifier.size(64.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
             } else {
-                Log.v("PaymentScreen", "in else...")
+                BankLog.v("PaymentScreen", "in else...")
 
                 Button(
                     onClick = { paymentViewModel.sendPayment() },
