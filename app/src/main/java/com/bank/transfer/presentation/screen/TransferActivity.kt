@@ -19,7 +19,6 @@ class TransferActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         avoidScreenShot()
-
         setContent {
             PaymentBankTheme {
                 val navController = rememberNavController()

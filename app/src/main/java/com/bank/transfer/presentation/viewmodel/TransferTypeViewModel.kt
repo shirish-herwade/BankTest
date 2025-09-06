@@ -14,14 +14,11 @@ class TransferTypeViewModel : ViewModel() {
     val navigationEvent = _navigationEvent.asSharedFlow()
     val TAG = "TransferTypeViewModel"
     internal fun onDomesticTypeSelected() {
-        BankLog.v(TAG,"in onDomesticTypeSelected. before launch")
         viewModelScope.launch {
-            BankLog.v(TAG,"in onDomesticTypeSelected. in launch")
             _navigationEvent.emit(
                 TransferTypeNavigationEvent
                     .NavigateToPayment(TransferType.DOMESTIC)
             )
-            BankLog.v(TAG,"in onDomesticTypeSelected. after emit")
         }
     }
 
