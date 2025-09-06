@@ -37,6 +37,9 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -59,6 +62,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
-
     implementation(libs.material3)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
+
+    // Core testing
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.core.testing) // For InstantTaskExecutorRule
+
+    // Coroutines testing
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    // Mockito for mocking
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline) // If you need to mock final classes/methods
+
 }
