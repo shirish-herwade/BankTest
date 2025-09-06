@@ -1,19 +1,23 @@
 package com.bank.transfer.presentation.viewmodel
 
 import android.util.Log
-import androidx.compose.animation.core.copy
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bank.transfer.data.model.PaymentUIState
+import com.bank.transfer.data.model.TransferDetails
+import com.bank.transfer.data.model.TransferResult
 import com.bank.transfer.data.model.TransferType
 import com.bank.transfer.domain.BankLog
+import com.bank.transfer.domain.repository.TransferRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class PaymentViewModel : ViewModel() {
+class PaymentViewModel(
+    private val transferRepository: TransferRepository
+) : ViewModel() {
 
     private var _uiState = mutableStateOf(PaymentUIState())
     val uiState: State<PaymentUIState> = _uiState
@@ -156,7 +160,10 @@ class PaymentViewModel : ViewModel() {
             return
         }
 
-        _uiState.value = _uiState.value.copy(isLoading = true, paymentResult = null)
+        _uiState.value = _uiState.value.copy(
+            isLoading = true,
+            paymentResult = null
+        )
         BankLog.d(
             "PaymentViewModel",
             "Attempting to send payment. Details: $_uiState.value, CurrentState: $_uiState.value"
@@ -164,14 +171,29 @@ class PaymentViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                BankLog.v("PaymentViewModel", "Sending payment...")
-                _uiState.value = _uiState.value.copy(
-                    isLoading = true,
-                    paymentResult = null
-                )
-                delay(3000)
-                val success = Random.nextBoolean()
-                if (success) {
+                val paymentResult: TransferResult
+
+                if (_uiState.value.currentTransferType == TransferType.DOMESTIC) {
+                    paymentResult = transferRepository.domesticTransfer(
+                        TransferDetails.DomesticTransferDetails(
+                            _uiState.value.recipientName,
+                            _uiState.value.accountNumber,
+                            _uiState.value.amount.toDouble()
+                        )
+                    )
+                } else {
+                    paymentResult = transferRepository.internationalTransfer(
+                        TransferDetails.InternationalTransferDetails(
+                            _uiState.value.recipientName,
+                            _uiState.value.accountNumber,
+                            _uiState.value.amount.toDouble(),
+                            _uiState.value.iban,
+                            _uiState.value.swiftCode
+                        )
+                    )
+                }
+
+                if (paymentResult is TransferResult.Success) {
                     BankLog.v("PaymentViewModel", "Payment successful!")
                     _uiState.value =
                         _uiState.value.copy(
@@ -179,15 +201,13 @@ class PaymentViewModel : ViewModel() {
                             paymentResult = "Payment Successful!"
                         )
                     clearFields()
-//                onResult(TransferResult.Success(message = "Payment Successful!"))
-                } else {
+                } else { //  (paymentResult is TransferResult.Error)
                     BankLog.v("PaymentViewModel", "Payment failed!")
                     _uiState.value =
                         _uiState.value.copy(
                             isLoading = false,
                             paymentResult = "Payment Failed."
                         )
-//                onResult(TransferResult.Error(message = "Payment Failed."))
                 }
             } catch (e: Exception) {
                 BankLog.v("PaymentViewModel", "Payment failed with exception: ${e.message}")
@@ -199,4 +219,3 @@ class PaymentViewModel : ViewModel() {
         }
     }
 }
-

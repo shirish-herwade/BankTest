@@ -1,7 +1,6 @@
 package com.bank.transfer.presentation.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,8 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bank.transfer.data.model.TransferType
 import com.bank.transfer.domain.BankLog
+import com.bank.transfer.domain.repository.TransferRepository
+import com.bank.transfer.presentation.factory.PaymentViewModelFactory
 import com.bank.transfer.presentation.viewmodel.PaymentViewModel
 import com.bank.transfer.ui.theme.PaymentBankTheme
 
@@ -51,7 +53,11 @@ fun PaymentScreen(
     onSendPayment: () -> Unit,
     onBack: () -> Unit
 ) {
-    val paymentViewModel = PaymentViewModel()
+    val TAG = "PaymentScreen"
+
+    val repository: TransferRepository = TransferRepository.create()
+    val paymentViewModelFactory = PaymentViewModelFactory(repository)
+    val paymentViewModel: PaymentViewModel = viewModel(factory = paymentViewModelFactory)
 
     LaunchedEffect(transferType) {
         paymentViewModel.initializeTransferType(transferType)
@@ -195,14 +201,14 @@ fun PaymentScreen(
             Spacer(Modifier.height(16.dp))
 
             if (paymentViewModel.uiState.value.isLoading) {
-                BankLog.v("PaymentScreen", "in if Loading...")
+                BankLog.v(TAG, "in if Loading...")
                 CircularProgressIndicator(
                     strokeWidth = 8.dp,
                     modifier = Modifier.size(64.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
             } else {
-                BankLog.v("PaymentScreen", "in else...")
+                BankLog.v(TAG, "in else...")
 
                 Button(
                     onClick = { paymentViewModel.sendPayment() },

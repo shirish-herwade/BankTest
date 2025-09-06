@@ -1,13 +1,17 @@
 package com.bank.transfer.data.model
 
-data class TransferDetails(
-    val amount: Double,
-    val fromAccount: String,
-    val toAccount: String,
-    val swiftCode: String,
-    val recipientName: String,
-    val accountNumber: String,
-    val iban: String
-) {
+sealed class TransferDetails {
+    data class DomesticTransferDetails(
+        val recipientName: String,
+        val accountNumber: String,
+        val amount: Double,
+    )
 
+    data class InternationalTransferDetails(
+        val recipientName: String,
+        val accountNumber: String,
+        val amount: Double,
+        val iban: String,
+        val swiftCode: String,
+    )
 }
