@@ -153,7 +153,7 @@ class PaymentViewModel(
         )
         BankLog.d(
             TAG,
-            "Attempting to send payment. Details: $_uiState.value, CurrentState: $_uiState.value"
+            "in send payment. CurrentState: $_uiState.value"
         )
 
         viewModelScope.launch {
