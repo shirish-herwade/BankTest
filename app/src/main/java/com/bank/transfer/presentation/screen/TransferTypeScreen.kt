@@ -50,7 +50,7 @@ fun TransferTypeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "TransferScreen",
+                text = "Transfer Screen",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .fillMaxWidth()
