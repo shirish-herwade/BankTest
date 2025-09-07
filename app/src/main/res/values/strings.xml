@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PaymentBank</string>
+    <string name="transfer_test">Transfer Test</string>
 </resources>
