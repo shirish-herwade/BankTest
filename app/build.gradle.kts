@@ -39,6 +39,7 @@ android {
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -53,6 +54,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.ui.test.junit4.android)
+    implementation(libs.androidx.navigation.testing.android)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
@@ -79,4 +82,8 @@ dependencies {
     testImplementation(libs.mockito.inline) // If you need to mock final classes/methods
 
     testImplementation(libs.turbine) // Add this line
+
+    testImplementation(libs.robolectric) // Add Robolectric
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.mockk.agent)
 }

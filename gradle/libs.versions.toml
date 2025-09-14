@@ -2,21 +2,25 @@
 agp = "8.11.1"
 coreTesting = "2.2.0"
 hiltNavigationCompose = "1.2.0"
-kotlin = "2.0.21"
+kotlin = "2.2.20"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 kotlinxCoroutinesTest = "1.10.2"
-lifecycleRuntimeKtx = "2.9.2"
-activityCompose = "1.10.1"
+lifecycleRuntimeKtx = "2.9.3"
+activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 mockitoInline = "5.2.0"
 mockitoKotlin = "5.2.1"
-navigationCompose = "2.7.7"
-navigationRuntimeAndroid = "2.9.3"
+navigationCompose = "2.9.4"
+navigationRuntimeAndroid = "2.9.4"
 junitJupiter = "5.8.1"
-turbine = "1.1.0"
+robolectric = "4.16"
+turbine = "1.2.1"
+uiTestJunit4Android = "1.9.1"
+navigationTestingAndroid = "2.9.4"
+mockk = "1.14.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,7 +47,12 @@ androidx-navigation-runtime-android = { group = "androidx.navigation", name = "n
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
+androidx-navigation-testing-android = { group = "androidx.navigation", name = "navigation-testing-android", version.ref = "navigationTestingAndroid" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+mockk-agent = { group = "io.mockk", name = "mockk-agent-jvm", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

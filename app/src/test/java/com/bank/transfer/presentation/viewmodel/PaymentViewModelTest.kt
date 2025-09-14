@@ -62,7 +62,7 @@ class PaymentViewModelTest {
     @Test
     fun `setTransferType to DOMESTIC resets relevant fields`() {
         viewModel.initializeTransferType(TransferType.INTERNATIONAL)
-        viewModel.onRecipientNameChanged("John Doe")
+        viewModel.onRecipientNameChanged(name)
         viewModel.onAccountNumberChanged("123456789")
         viewModel.onAmountChanged("100.0")
         viewModel.onIbanChanged("DE89370400440532013000")
@@ -90,7 +90,7 @@ class PaymentViewModelTest {
         viewModel.onIbanChanged("DE89370400440532013000")
         viewModel.onSwiftCodeChanged("DEUTDEFF")
 
-        viewModel.onRecipientNameChanged("John Doe")
+        viewModel.onRecipientNameChanged(name)
         viewModel.setTransferType(TransferType.INTERNATIONAL)
 
         assertEquals("DE89370400440532013000", viewModel.uiState.value.iban)
@@ -192,7 +192,7 @@ class PaymentViewModelTest {
     @Test
     fun `sendPayment with invalid account number shows error`() {
         viewModel.initializeTransferType(TransferType.DOMESTIC)
-        viewModel.onRecipientNameChanged("John Doe")
+        viewModel.onRecipientNameChanged(name)
         viewModel.onAccountNumberChanged("123")
         viewModel.onAmountChanged("10")
         viewModel.sendPayment()
@@ -205,7 +205,7 @@ class PaymentViewModelTest {
     @Test
     fun `sendPayment with invalid amount shows error`() {
         viewModel.initializeTransferType(TransferType.DOMESTIC)
-        viewModel.onRecipientNameChanged("John Doe")
+        viewModel.onRecipientNameChanged(name)
         viewModel.onAccountNumberChanged("12345678")
         viewModel.onAmountChanged("abc")
         viewModel.sendPayment()
@@ -215,7 +215,7 @@ class PaymentViewModelTest {
     @Test
     fun `sendPayment for INTERNATIONAL with missing IBAN shows error`() {
         viewModel.initializeTransferType(TransferType.INTERNATIONAL)
-        viewModel.onRecipientNameChanged("John Doe")
+        viewModel.onRecipientNameChanged(name)
         viewModel.onAccountNumberChanged("12345678")
         viewModel.onAmountChanged("100")
         // viewModel.onIbanChanged("...")
@@ -227,7 +227,7 @@ class PaymentViewModelTest {
     @Test
     fun `sendPayment for INTERNATIONAL with missing SWIFT shows error`() {
         viewModel.initializeTransferType(TransferType.INTERNATIONAL)
-        viewModel.onRecipientNameChanged("John Doe")
+        viewModel.onRecipientNameChanged(name)
         viewModel.onAccountNumberChanged("12345678")
         viewModel.onAmountChanged("100")
         viewModel.onIbanChanged("DE89370400440532013000")
@@ -414,5 +414,9 @@ class PaymentViewModelTest {
         assertEquals(recipientName, viewModel.uiState.value.recipientName) // Fields not cleared
 
         verify(mockTransferRepository).domesticTransfer(expectedDetails)
+    }
+    
+    companion object{
+        private val name = "Shirish Herwade"
     }
 }
