@@ -6,6 +6,7 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
+import com.bank.transfer.data.model.TransferType
 import com.bank.transfer.presentation.viewmodel.PaymentViewModel
 import io.mockk.mockk
 import io.mockk.verify
@@ -47,7 +48,11 @@ class AppNavHostTest {
     @Test
     fun appNavHost_verifyStartDestination() {
         composeTestRule.setContent {
-            AppNavHost(navController = navController, paymentViewModel = mockPaymentViewModel)
+            AppNavHost(
+                navController = navController,
+                paymentViewModel = mockPaymentViewModel,
+                finish = context.finish()
+            )
         }
 
         // Check that the current destination is the start destination
@@ -59,7 +64,11 @@ class AppNavHostTest {
     @Test
     fun appNavHost_navigateToPaymentScreen_fromTransferTypeScreen() {
         composeTestRule.setContent {
-            AppNavHost(navController = navController, paymentViewModel = mockPaymentViewModel)
+            AppNavHost(
+                navController = navController,
+                paymentViewModel = mockPaymentViewModel,
+                finish = context.finish()
+            )
         }
 
         // 1. Ensure we are on the TransferTypeScreen
@@ -67,8 +76,8 @@ class AppNavHostTest {
 
         // 2. Simulate the action that triggers navigation (e.g., clicking a button in TransferTypeScreen)
         // This will call the onNavigateToPaymentScreen lambda in your AppNavHost
-        val testTransferType = "DOMESTIC"
-        composeTestRule.onNodeWithText(testTransferType)
+        val testTransferType = TransferType.DOMESTIC
+        composeTestRule.onNodeWithText(testTransferType.toString())
             .performClick() // Assuming you have a button/item with this text
 
         // 3. Verify that the PaymentViewModel was updated
@@ -85,7 +94,11 @@ class AppNavHostTest {
     @Test
     fun appNavHost_popBackStack_fromPaymentScreen() {
         composeTestRule.setContent {
-            AppNavHost(navController = navController, paymentViewModel = mockPaymentViewModel)
+            AppNavHost(
+                navController = navController,
+                paymentViewModel = mockPaymentViewModel,
+                finish = context.finish()
+            )
         }
 
         // First, navigate to PaymentScreen
@@ -93,7 +106,7 @@ class AppNavHostTest {
         navController.setCurrentDestination(AppDestinations.TRANSFER_TYPE_ROUTE) // Start here
         composeTestRule.runOnUiThread { // Ensure navigation happens on the main thread
             // Simulate the navigation that would happen
-            mockPaymentViewModel.setTransferType("ANY_TYPE") // Call this as it's part of the original lambda
+            mockPaymentViewModel.setTransferType(TransferType.DOMESTIC) // Call this as it's part of the original lambda
             navController.navigate(AppDestinations.PAYMENT_ROUTE)
         }
         composeTestRule.waitForIdle() // Wait for navigation to complete
